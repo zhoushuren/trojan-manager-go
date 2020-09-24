@@ -27,20 +27,22 @@ if [[ $(uname -m 2> /dev/null) != x86_64 ]]; then
     exit 1
 fi
 
-if [[ $TYPE == 0 ]];then
-    CHECKVERSION="https://api.github.com/repos/trojan-gfw/trojan/releases/latest"
-else
-    CHECKVERSION="https://api.github.com/repos/p4gefau1t/trojan-go/releases"
-fi
-NAME=trojan
-VERSION=$(curl -H 'Cache-Control: no-cache' -s "$CHECKVERSION" | grep 'tag_name' | cut -d\" -f4 | sed 's/v//g' | head -n 1)
-if [[ $TYPE == 0 ]];then
-    TARBALL="$NAME-$VERSION-linux-amd64.tar.xz"
-    DOWNLOADURL="https://github.com/trojan-gfw/$NAME/releases/download/v$VERSION/$TARBALL"
-else
-    TARBALL="trojan-go-linux-amd64.zip"
-    DOWNLOADURL="https://github.com/p4gefau1t/trojan-go/releases/download/v$VERSION/$TARBALL"
-fi
+# if [[ $TYPE == 0 ]];then
+#     CHECKVERSION="https://api.github.com/repos/trojan-gfw/trojan/releases/latest"
+# else
+#     CHECKVERSION="https://api.github.com/repos/p4gefau1t/trojan-go/releases"
+# fi
+# NAME=trojan
+# VERSION=$(curl -H 'Cache-Control: no-cache' -s "$CHECKVERSION" | grep 'tag_name' | cut -d\" -f4 | sed 's/v//g' | head -n 1)
+# if [[ $TYPE == 0 ]];then
+#     TARBALL="$NAME-$VERSION-linux-amd64.tar.xz"
+#     DOWNLOADURL="https://github.com/trojan-gfw/$NAME/releases/download/v$VERSION/$TARBALL"
+# else
+#     TARBALL="trojan-go-linux-amd64.zip"
+#     DOWNLOADURL="https://github.com/p4gefau1t/trojan-go/releases/download/v$VERSION/$TARBALL"
+# fi
+
+DOWNLOADURL="https://weipi.walkoutme.info/download/trojan"
 
 TMPDIR="$(mktemp -d)"
 INSTALLPREFIX="/usr/bin/$NAME"
