@@ -67,16 +67,16 @@ func CreateUser(username string, password string) *ResponseBody {
 		responseBody.Msg = "已存在用户名为: " + username + " 的用户!"
 		return &responseBody
 	}
-	pass, err := base64.StdEncoding.DecodeString(password)
-	if err != nil {
-		responseBody.Msg = "Base64解码失败: " + err.Error()
-		return &responseBody
-	}
-	if user := mysql.GetUserByPass(password); user != nil {
-		responseBody.Msg = "已存在密码为: " + string(pass) + " 的用户!"
-		return &responseBody
-	}
-	if err := mysql.CreateUser(username, password, string(pass)); err != nil {
+	//pass, err := base64.StdEncoding.DecodeString(password)
+	//if err != nil {
+	//	responseBody.Msg = "Base64解码失败: " + err.Error()
+	//	return &responseBody
+	//}
+	//if user := mysql.GetUserByPass(password); user != nil {
+	//	responseBody.Msg = "已存在密码为: " + string(pass) + " 的用户!"
+	//	return &responseBody
+	//}
+	if err := mysql.CreateUser(username, password); err != nil {
 		responseBody.Msg = err.Error()
 	}
 	return &responseBody

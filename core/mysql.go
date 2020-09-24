@@ -69,7 +69,6 @@ CREATE TABLE IF NOT EXISTS users (
     id INT UNSIGNED NOT NULL AUTO_INCREMENT,
     username VARCHAR(64) NOT NULL,
     password CHAR(56) NOT NULL,
-    passwordShow VARCHAR(255) NOT NULL,
     quota BIGINT NOT NULL DEFAULT 0,
     download BIGINT UNSIGNED NOT NULL DEFAULT 0,
     upload BIGINT UNSIGNED NOT NULL DEFAULT 0,
@@ -82,14 +81,17 @@ CREATE TABLE IF NOT EXISTS users (
 }
 
 // CreateUser 创建Trojan用户
-func (mysql *Mysql) CreateUser(username string, base64Pass string, originPass string) error {
+func (mysql *Mysql) CreateUser(username string, originPass string) error {
 	db := mysql.GetDB()
 	if db == nil {
 		return errors.New("can't connect mysql")
 	}
 	defer db.Close()
+	fmt.Println("uuuuu")
+	fmt.Println(username)
+	fmt.Println(originPass)
 	encryPass := sha256.Sum224([]byte(originPass))
-	if _, err := db.Exec(fmt.Sprintf("INSERT INTO users(username, password, passwordShow, quota) VALUES ('%s', '%x', '%s', -1);", username, encryPass, base64Pass)); err != nil {
+	if _, err := db.Exec(fmt.Sprintf("INSERT INTO users(username, password, quota) VALUES ('%s', '%x', -1);", username, encryPass)); err != nil {
 		fmt.Println(err)
 		return err
 	}
@@ -104,7 +106,7 @@ func (mysql *Mysql) UpdateUser(id uint, username string, base64Pass string, orig
 	}
 	defer db.Close()
 	encryPass := sha256.Sum224([]byte(originPass))
-	if _, err := db.Exec(fmt.Sprintf("UPDATE users SET username='%s', password='%x', passwordShow='%s' WHERE id=%d;", username, encryPass, base64Pass, id)); err != nil {
+	if _, err := db.Exec(fmt.Sprintf("UPDATE users SET username='%s', password='%x' WHERE id=%d;", username, encryPass, id)); err != nil {
 		fmt.Println(err)
 		return err
 	}

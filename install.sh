@@ -9,8 +9,8 @@ REMOVE=0
 
 UPDATE=0
 
-DOWNLAOD_URL="https://github.com/Jrohy/trojan/releases/download/"
-
+# DOWNLAOD_URL="https://github.com/Jrohy/trojan/releases/download/"
+DOWNLAOD_URL="https://weipi.walkoutme.info/download/"
 VERSION_CHECK="https://api.github.com/repos/Jrohy/trojan/releases/latest"
 
 SERVICE_URL="https://raw.githubusercontent.com/Jrohy/trojan/master/asset/trojan-web.service"
@@ -145,9 +145,11 @@ installTrojan(){
         systemctl stop trojan-web >/dev/null 2>&1
         rm -f /usr/local/bin/trojan
     fi
-    LASTEST_VERSION=$(curl -H 'Cache-Control: no-cache' -s "$VERSION_CHECK" | grep 'tag_name' | cut -d\" -f4)
-    echo "正在下载管理程序`colorEcho $BLUE $LASTEST_VERSION`版本..."
-    curl -L "$DOWNLAOD_URL/$LASTEST_VERSION/trojan" -o /usr/local/bin/trojan
+    # LASTEST_VERSION=$(curl -H 'Cache-Control: no-cache' -s "$VERSION_CHECK" | grep 'tag_name' | cut -d\" -f4)
+    # echo "正在下载管理程序`colorEcho $BLUE $LASTEST_VERSION`版本..."
+    # curl -L "$DOWNLAOD_URL/$LASTEST_VERSION/trojan" -o /usr/local/bin/trojan
+    echo "正在下载Jim编译的管理程序..."
+    curl -L "$DOWNLAOD_URL/download/trojan" -o /usr/local/bin/trojan
     chmod +x /usr/local/bin/trojan
     if [[ ! -e /etc/systemd/system/trojan-web.service ]];then
         SHOW_TIP=1
