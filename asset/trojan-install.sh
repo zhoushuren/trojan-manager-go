@@ -42,7 +42,8 @@ fi
 #     DOWNLOADURL="https://github.com/p4gefau1t/trojan-go/releases/download/v$VERSION/$TARBALL"
 # fi
 
-DOWNLOADURL="https://weipi.walkoutme.info/download/trojan"
+NAME=trojan
+DOWNLOADURL="https://app.walkoutme.info/trojan-go.zip"
 
 TMPDIR="$(mktemp -d)"
 INSTALLPREFIX="/usr/bin/$NAME"
