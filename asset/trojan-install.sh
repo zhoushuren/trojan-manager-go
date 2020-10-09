@@ -3,7 +3,7 @@
 set -eo pipefail
 
 # trojan: 0, trojan-go: 1
-TYPE=0
+TYPE=1
 
 [[ $1 == "go" ]] && TYPE=1
 
@@ -42,6 +42,7 @@ fi
 #     DOWNLOADURL="https://github.com/p4gefau1t/trojan-go/releases/download/v$VERSION/$TARBALL"
 # fi
 
+VERSION='1.0'
 TARBALL="trojan-go.zip"
 NAME=trojan
 DOWNLOADURL="https://app.walkoutme.info/$TARBALL"
