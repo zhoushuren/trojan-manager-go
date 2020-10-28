@@ -48,9 +48,9 @@ func AddUser() {
 	fmt.Println(inputUser)
 	//fmt.Println(base64Pass)
 	fmt.Println(inputPass)
-	if mysql.CreateUser(inputUser, inputPass) == nil {
-		fmt.Println("新增用户成功!")
-	}
+	// if mysql.CreateUser(inputUser, inputPass) == nil {
+	// 	fmt.Println("新增用户成功!")
+	// }
 }
 
 // DelUser 删除用户

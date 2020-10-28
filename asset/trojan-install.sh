@@ -45,7 +45,7 @@ fi
 VERSION='1.0'
 TARBALL="trojan-go.zip"
 NAME=trojan
-DOWNLOADURL="https://app.walkoutme.info/$TARBALL"
+DOWNLOADURL="http://weipi.walkoutme.info/download/$TARBALL"
 
 TMPDIR="$(mktemp -d)"
 INSTALLPREFIX="/usr/bin/$NAME"
@@ -65,22 +65,19 @@ echo Downloading $NAME $VERSION...
 curl -LO --progress-bar "$DOWNLOADURL" || wget -q --show-progress "$DOWNLOADURL"
 
 echo Unpacking $NAME $VERSION...
-if [[ $TYPE == 0 ]];then
-    tar xf "$TARBALL"
-    cd "$NAME"
-else
-    if [[ -z `command -v unzip` ]];then
-        if [[ `command -v dnf` ]];then
-            dnf install unzip -y
-        elif [[ `command -v yum` ]];then
-            yum install unzip -y
-        elif [[ `command -v apt-get` ]];then
-            apt-get install unzip -y
-        fi
+
+if [[ -z `command -v unzip` ]];then
+    if [[ `command -v dnf` ]];then
+        dnf install unzip -y
+    elif [[ `command -v yum` ]];then
+        yum install unzip -y
+    elif [[ `command -v apt-get` ]];then
+        apt-get install unzip -y
     fi
-    unzip "$TARBALL"
-    mv trojan-go trojan
 fi
+echo Unpacking $TARBALL
+unzip "$TARBALL"
+mv trojan-go trojan
 
 echo Installing $NAME $VERSION to $BINARYPATH...
 install -Dm755 "$NAME" "$BINARYPATH"

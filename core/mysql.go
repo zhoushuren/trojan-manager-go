@@ -6,15 +6,17 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	mysqlDriver "github.com/go-sql-driver/mysql"
 	"io/ioutil"
 	"log"
 	"trojan/util"
 
+	mysqlDriver "github.com/go-sql-driver/mysql"
+
 	// mysql sql驱动
-	_ "github.com/go-sql-driver/mysql"
 	"strconv"
 	"strings"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 // Mysql 结构体
@@ -81,17 +83,29 @@ CREATE TABLE IF NOT EXISTS users (
 }
 
 // CreateUser 创建Trojan用户
-func (mysql *Mysql) CreateUser(username string, originPass string) error {
+func (mysql *Mysql) CreateUser(username string, originPass string, quota uint, expire_time uint) error {
 	db := mysql.GetDB()
 	if db == nil {
 		return errors.New("can't connect mysql")
 	}
 	defer db.Close()
-	fmt.Println("uuuuu")
-	fmt.Println(username)
-	fmt.Println(originPass)
 	encryPass := sha256.Sum224([]byte(originPass))
-	if _, err := db.Exec(fmt.Sprintf("INSERT INTO users(username, password, quota) VALUES ('%s', '%x', -1);", username, encryPass)); err != nil {
+	if _, err := db.Exec(fmt.Sprintf("INSERT INTO users(username, password, quota, expire_time) VALUES ('%s', '%x', %d, %d);", username, encryPass, quota, expire_time)); err != nil {
+		fmt.Println(err)
+		return err
+	}
+	return nil
+}
+
+func (mysql *Mysql) UpdateStatus(status uint, password string) error {
+	db := mysql.GetDB()
+	if db == nil {
+		return errors.New("can't connect mysql")
+	}
+	defer db.Close()
+	encryPass := sha256.Sum224([]byte(password))
+	fmt.Printf("UPDATE users SET status='%d' WHERE password=%x;", status, encryPass)
+	if _, err := db.Exec(fmt.Sprintf("UPDATE users SET status='%d' WHERE password='%x';", status, encryPass)); err != nil {
 		fmt.Println(err)
 		return err
 	}

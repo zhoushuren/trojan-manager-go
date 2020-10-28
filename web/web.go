@@ -2,14 +2,15 @@ package web
 
 import (
 	"fmt"
-	"github.com/gin-contrib/gzip"
-	"github.com/gin-gonic/gin"
-	"github.com/gobuffalo/packr/v2"
-	"net/http"
+	_ "net/http"
 	"strconv"
 	"trojan/core"
 	"trojan/util"
 	"trojan/web/controller"
+
+	"github.com/gin-contrib/gzip"
+	"github.com/gin-gonic/gin"
+	_ "github.com/gobuffalo/packr/v2"
 )
 
 func userRouter(router *gin.Engine) {
@@ -33,7 +34,17 @@ func userRouter(router *gin.Engine) {
 		user.POST("", func(c *gin.Context) {
 			username := c.PostForm("username")
 			password := c.PostForm("password")
-			c.JSON(200, controller.CreateUser(username, password))
+			quotaStr := c.PostForm("quota")
+			expire_timeStr := c.PostForm("expire_time")
+			quota, _ := strconv.Atoi(quotaStr)
+			expire_time, _ := strconv.Atoi(expire_timeStr)
+			c.JSON(200, controller.CreateUser(username, password, uint(quota), uint(expire_time)))
+		})
+		user.POST("/update/status", func(c *gin.Context) {
+			statusStr := c.PostForm("status")
+			password := c.PostForm("password")
+			status, _ := strconv.Atoi(statusStr)
+			c.JSON(200, controller.UpdateStatus(password, uint(status)))
 		})
 		user.POST("/update", func(c *gin.Context) {
 			sid := c.PostForm("id")
@@ -50,38 +61,38 @@ func userRouter(router *gin.Engine) {
 	}
 }
 
-func trojanRouter(router *gin.Engine) {
-	router.POST("/trojan/start", func(c *gin.Context) {
-		c.JSON(200, controller.Start())
-	})
-	router.POST("/trojan/stop", func(c *gin.Context) {
-		c.JSON(200, controller.Stop())
-	})
-	router.POST("/trojan/restart", func(c *gin.Context) {
-		c.JSON(200, controller.Restart())
-	})
-	router.GET("/trojan/loglevel", func(c *gin.Context) {
-		c.JSON(200, controller.GetLogLevel())
-	})
-	router.POST("/trojan/update", func(c *gin.Context) {
-		c.JSON(200, controller.Update())
-	})
-	router.POST("/trojan/switch", func(c *gin.Context) {
-		tType := c.DefaultPostForm("type", "trojan")
-		c.JSON(200, controller.SetTrojanType(tType))
-	})
-	router.POST("/trojan/loglevel", func(c *gin.Context) {
-		slevel := c.DefaultPostForm("level", "1")
-		level, _ := strconv.Atoi(slevel)
-		c.JSON(200, controller.SetLogLevel(level))
-	})
-	router.POST("/trojan/domain", func(c *gin.Context) {
-		c.JSON(200, controller.SetDomain(c.PostForm("domain")))
-	})
-	router.GET("/trojan/log", func(c *gin.Context) {
-		controller.Log(c)
-	})
-}
+// func trojanRouter(router *gin.Engine) {
+// 	router.POST("/trojan/start", func(c *gin.Context) {
+// 		c.JSON(200, controller.Start())
+// 	})
+// 	router.POST("/trojan/stop", func(c *gin.Context) {
+// 		c.JSON(200, controller.Stop())
+// 	})
+// 	router.POST("/trojan/restart", func(c *gin.Context) {
+// 		c.JSON(200, controller.Restart())
+// 	})
+// 	router.GET("/trojan/loglevel", func(c *gin.Context) {
+// 		c.JSON(200, controller.GetLogLevel())
+// 	})
+// 	router.POST("/trojan/update", func(c *gin.Context) {
+// 		c.JSON(200, controller.Update())
+// 	})
+// 	router.POST("/trojan/switch", func(c *gin.Context) {
+// 		tType := c.DefaultPostForm("type", "trojan")
+// 		c.JSON(200, controller.SetTrojanType(tType))
+// 	})
+// 	router.POST("/trojan/loglevel", func(c *gin.Context) {
+// 		slevel := c.DefaultPostForm("level", "1")
+// 		level, _ := strconv.Atoi(slevel)
+// 		c.JSON(200, controller.SetLogLevel(level))
+// 	})
+// 	router.POST("/trojan/domain", func(c *gin.Context) {
+// 		c.JSON(200, controller.SetDomain(c.PostForm("domain")))
+// 	})
+// 	router.GET("/trojan/log", func(c *gin.Context) {
+// 		controller.Log(c)
+// 	})
+// }
 
 func dataRouter(router *gin.Engine) {
 	data := router.Group("/trojan/data")
@@ -116,24 +127,24 @@ func commonRouter(router *gin.Engine) {
 	}
 }
 
-func staticRouter(router *gin.Engine) {
-	box := packr.New("trojanBox", "./templates")
-	router.Use(func(c *gin.Context) {
-		requestUrl := c.Request.URL.Path
-		if box.Has(requestUrl) || requestUrl == "/" {
-			http.FileServer(box).ServeHTTP(c.Writer, c.Request)
-			c.Abort()
-		}
-	})
-}
+// func staticRouter(router *gin.Engine) {
+// 	box := packr.New("trojanBox", "./templates")
+// 	router.Use(func(c *gin.Context) {
+// 		requestUrl := c.Request.URL.Path
+// 		if box.Has(requestUrl) || requestUrl == "/" {
+// 			http.FileServer(box).ServeHTTP(c.Writer, c.Request)
+// 			c.Abort()
+// 		}
+// 	})
+// }
 
 // Start web启动入口
 func Start(port int, isSSL bool) {
 	router := gin.Default()
 	router.Use(gzip.Gzip(gzip.DefaultCompression))
-	staticRouter(router)
-	router.Use(Auth(router).MiddlewareFunc())
-	trojanRouter(router)
+	// staticRouter(router)
+	// router.Use(Auth(router).MiddlewareFunc())
+	// trojanRouter(router)
 	userRouter(router)
 	dataRouter(router)
 	commonRouter(router)
